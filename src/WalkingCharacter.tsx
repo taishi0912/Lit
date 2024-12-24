@@ -55,6 +55,47 @@ const WalkingCharacter = () => {
     }
   ];
 
+    // 高層ビル（背景用）
+    const SkyscraperBackground = ({ position }) => (
+      <div 
+        className="absolute bottom-24"
+        style={{ left: `${position}px` }}
+      >
+        {/* 中央の高層ビル */}
+        <div className="relative w-screen h-96">
+          {/* メインタワー */}
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-48 h-96 bg-slate-700">
+            <div className="absolute inset-2 grid grid-cols-6 gap-1">
+              {[...Array(72)].map((_, i) => (
+                <div key={i} className="w-full h-4 bg-sky-200 bg-opacity-30" />
+              ))}
+            </div>
+            {/* 頂上部分 */}
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-24 h-8 bg-slate-800 rounded-t-lg" />
+          </div>
+          
+          {/* 左のビル群 */}
+          <div className="absolute bottom-0 left-20 w-32 h-72 bg-slate-600">
+            <div className="absolute inset-1 grid grid-cols-4 gap-1">
+              {[...Array(48)].map((_, i) => (
+                <div key={i} className="w-full h-4 bg-sky-200 bg-opacity-30" />
+              ))}
+            </div>
+          </div>
+          
+          {/* 右のビル群 */}
+          <div className="absolute bottom-0 right-20 w-32 h-80 bg-slate-800">
+            <div className="absolute inset-1 grid grid-cols-4 gap-1">
+              {[...Array(52)].map((_, i) => (
+                <div key={i} className="w-full h-4 bg-sky-200 bg-opacity-30" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+    
+  
   // 雲のコンポーネント
   const Cloud = ({ initialPosition }) => (
     <div 
@@ -317,22 +358,21 @@ const WalkingCharacter = () => {
   };
 
 
+  // ハッカソン会場
   const HackathonVenue = ({ position }) => (
     <div 
       className="absolute bottom-24"
-      style={{ left: `${position}px` ,
-      zIndex: 10,
-    }}
-      
+      style={{ left: `${position}px` }}
     >
-      <div className="relative w-64 h-48 bg-indigo-500 rounded-lg shadow-lg">
-        <div className="absolute top-4 left-4 text-white font-bold">
-          ハッカソン会場
-        </div>
+      {/* イベントスペース */}
+      <div className="relative w-64 h-32 bg-purple-900 rounded-lg">
+        {/* 大きなスクリーン */}
+        <div className="absolute top-4 left-4 right-4 h-12 bg-blue-200" />
+        {/* デスクエリア */}
+        <div className="absolute bottom-4 left-4 right-4 h-8 bg-gray-200" />
       </div>
     </div>
   );
-  
 
   // 風のエフェクト
   const WindEffect = () => (
@@ -554,16 +594,20 @@ const WalkingCharacter = () => {
             )}
           </>
         )}
-
-        {/* ハッカソンシーン */}
-        {currentScene === 4 && (
-          <ChatBubble 
-            text="メンターとしてメンバーを支えられる技術力やコミュニケーション力をつける！"
-            position={position} 
-            isLeft={false}
-            offsetY={30}
-          />
+                {/* ハッカソンシーン */}
+                {currentScene === 4 && (
+          <>
+            <SkyscraperBackground position={window.innerWidth * 0.5 + backgroundPosition} />
+            
+            <ChatBubble 
+              text="メンターとしてメンバーを支えられる技術力やコミュニケーション力をつける！"
+              position={position} 
+              isLeft={false}
+              offsetY={30}
+            />
+          </>
         )}
+
 
         {/* 最終シーン */}
         {currentScene === scenes.length - 1 && (
@@ -586,12 +630,6 @@ const WalkingCharacter = () => {
             />
           </>
         )}
-
-{/* ハッカソン会場 */}
-        {currentScene === 4 && (
-          <HackathonVenue position={window.innerWidth * 0.5 + backgroundPosition} />
-        )}
-
 
         {/* 地面 */}
         <div className={`absolute bottom-0 w-full h-24 ${scenes[currentScene].ground}`}>
