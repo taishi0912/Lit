@@ -346,6 +346,116 @@ const RoppongiHillsBackground = ({ position }) => {
   );
 };
 
+//転入
+const TransferExamBackground = ({ position }) => (
+  <div
+    className="absolute bottom-24"
+    style={{ left: `${position}px`, zIndex: 5 }}
+  >
+    <div className="relative w-screen">
+      {/* メイン図書館 */}
+      <div className="absolute bottom-0 left-0 w-full flex justify-center space-x-12">
+        {/* 図書館メイン建物 */}
+        <div className="relative w-[300px] h-[200px]">
+          <div className="absolute bottom-0 w-full h-full bg-amber-100 rounded-lg shadow-md">
+            {/* 窓のグリッド */}
+            <div className="absolute inset-4 grid grid-cols-8 gap-2">
+              {[...Array(32)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-full h-3 bg-amber-900/80 rounded shadow-inner"
+                />
+              ))}
+            </div>
+
+            {/* エントランス */}
+            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-20 h-12 bg-amber-200 rounded-b-lg shadow-md">
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-8 bg-amber-300 shadow-inner" />
+            </div>
+          </div>
+
+          {/* 図書館のサイン */}
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
+            <div className="px-4 py-1 bg-amber-700 text-amber-100 text-sm font-bold rounded shadow-md">
+              市立図書館
+            </div>
+          </div>
+        </div>
+
+        {/* 噴水 */}
+        <div className="relative w-48 h-48">
+          {/* 噴水台 */}
+          <div className="absolute bottom-0 w-full h-8 bg-gray-700 rounded-t-md shadow-md" />
+          {/* 水の柱 */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-4 h-16 bg-blue-400 rounded animate-fountain" />
+          {/* 水滴のアニメーション */}
+          {[...Array(10)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-blue-300 rounded-full animate-drop"
+              style={{
+                left: `${45 + Math.random() * 10}%`,
+                top: `${Math.random() * 20}%`,
+                animationDelay: `${Math.random() * 2}s`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* 光のエフェクト */}
+      <div className="absolute inset-0 bg-gradient-to-b from-orange-500/20 via-amber-300/10 to-transparent pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 50}%`,
+              width: '2px',
+              height: '2px',
+              backgroundColor: '#FFD700',
+              opacity: 0.3,
+              animation: `blink ${1 + Math.random()}s infinite`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* 光の反射 */}
+      <div className="absolute bottom-0 w-full">
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute bottom-4 h-6 bg-orange-200/10 blur-sm"
+            style={{
+              left: `${10 + i * 15}%`,
+              width: '30px',
+              animation: 'ripple 3s infinite',
+            }}
+          />
+        ))}
+      </div>
+    </div>
+
+    {/* スタイル定義 */}
+    <style jsx>{`
+      @keyframes blink {
+        0%, 100% { opacity: 0.2; }
+        50% { opacity: 0.6; }
+      }
+      @keyframes fountain {
+        0%, 100% { height: 16px; }
+        50% { height: 24px; }
+      }
+      @keyframes drop {
+        0% { transform: translateY(0); opacity: 1; }
+        100% { transform: translateY(50px); opacity: 0; }
+      }
+    `}</style>
+  </div>
+);
+
 
 // 大学（背景用）
 const UniversityBackground = ({ position }) => (
@@ -908,6 +1018,7 @@ const styles = `
         {/* 転入学試験シーン */}
         {currentScene === 2 && (
   <>
+  <TransferExamBackground position={window.innerWidth * 0.5 + backgroundPosition} />
     {/* 認定証の降下 */}
     {isPausedForKneeling && (
   <Certification characterPosition={position} />
