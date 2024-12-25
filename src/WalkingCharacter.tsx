@@ -4,13 +4,16 @@ const WalkingCharacter = () => {
   const [position, setPosition] = useState(0);
   const [isWalking, setIsWalking] = useState(false);
   const [animationPhase, setAnimationPhase] = useState(0);
+  // 追加コード: しゃがみ込み状態の管理
+  const [isKneeling, setIsKneeling] = useState(false);
   const [currentScene, setCurrentScene] = useState(0);
   const [backgroundPosition, setBackgroundPosition] = useState(0);
   const [direction, setDirection] = useState('right');
   const [lastUpdateTime, setLastUpdateTime] = useState(0);
   const [isHoodOn, setIsHoodOn] = useState(true);
   const [isWindBlowing, setIsWindBlowing] = useState(false);
-  
+  const [isPausedForKneeling, setIsPausedForKneeling] = useState(false);
+
   const ANIMATION_INTERVAL = 100;
   const MOVEMENT_SPEED = 3;
   const BACKGROUND_SCROLL_SPEED = 2;
@@ -55,129 +58,285 @@ const WalkingCharacter = () => {
     }
   ];
   
-  const RainyStreetBackground = ({ position }) => (
+  const Certification = ({ characterPosition }) => (
+    <div
+      className="absolute w-32 h-20 bg-gradient-to-r from-red-400 via-yellow-400 to-blue-400 border-4 border-blue-500 flex items-center justify-center text-lg font-bold text-white shadow-lg"
+      style={{
+        left: `${characterPosition}px`, // 主人公の位置に配置
+        top: `-50px`, // 初期位置を画面上部に設定
+        animation: "certFall 5s ease-in forwards",
+      }}
+    >
+      認定証
+    </div>
+  );
+
+
+  const ConstructionSiteBackground = ({ position }) => (
     <div 
       className="absolute bottom-24"
       style={{ left: `${position}px`, zIndex: 5 }}
     >
-      <div className="relative w-screen h-full">
-        {/* 背景のビル群 */}
-        <div className="absolute bottom-0 left-0 w-full flex justify-around opacity-50">
-          {[...Array(6)].map((_, i) => {
-            const height = 150 + Math.random() * 250;
-            return (
-              <div
-                key={i}
-                className="w-64 bg-gray-800 opacity-80"
-                style={{ height: `${height}px` }}
-              >
-                <div className="absolute inset-2 grid grid-cols-4 gap-2">
-                  {[...Array(24)].map((_, j) => (
-                    <div key={j} className="w-full h-4 bg-yellow-100/20" />
-                  ))}
+      <div className="relative w-screen">
+        {/* 工事現場の要素群 */}
+        <div className="absolute bottom-0 left-0 w-full flex justify-around">
+          {/* 工事現場の囲い */}
+          <div className="absolute bottom-0 w-full h-16 flex overflow-hidden">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="flex-1 h-full">
+                <div className="w-full h-full border-2 border-yellow-500 bg-yellow-500/20 flex items-center justify-center">
+                  <div className="transform -rotate-12 text-yellow-500 font-bold">工事中</div>
                 </div>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
   
-        {/* 街灯 */}
-        {[...Array(4)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute bottom-0"
-            style={{ left: `${200 + i * 300}px` }}
-          >
-            <div className="w-4 h-48 bg-gray-700" />
-            <div className="absolute -top-4 -left-8 w-20 h-8">
-              <div className="w-full h-full bg-gray-800" />
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-8 rounded-full bg-yellow-100/50">
-                <div className="absolute inset-1 rounded-full bg-yellow-200/30" />
+          {/* 建設中の高層ビル */}
+          <div className="relative w-64 h-[400px]">
+            {/* コンクリートの骨組み */}
+            <div className="absolute bottom-0 w-full h-full bg-gray-700">
+              <div className="absolute inset-2 grid grid-cols-4 gap-4">
+                {[...Array(24)].map((_, i) => (
+                  <div key={i} className="w-full h-8 border-2 border-gray-600" />
+                ))}
+              </div>
+            </div>
+            {/* 足場と養生シート */}
+            <div className="absolute inset-y-0 -left-4 w-8 bg-gray-800/50">
+              <div className="absolute inset-0 bg-blue-200/10 animate-pulse" />
+              <div className="absolute inset-2 grid grid-rows-12 gap-8">
+                {[...Array(12)].map((_, i) => (
+                  <div key={i} className="w-full h-1 bg-gray-600" />
+                ))}
+              </div>
+            </div>
+            <div className="absolute inset-y-0 -right-4 w-8 bg-gray-800/50">
+              <div className="absolute inset-0 bg-blue-200/10 animate-pulse" />
+              <div className="absolute inset-2 grid grid-rows-12 gap-8">
+                {[...Array(12)].map((_, i) => (
+                  <div key={i} className="w-full h-1 bg-gray-600" />
+                ))}
               </div>
             </div>
           </div>
+  
+          {/* タワークレーン */}
+          <div className="absolute bottom-0 left-1/4 w-8 h-[450px]">
+            <div className="relative w-full h-full bg-yellow-600">
+              {/* クレーンの手すり */}
+              {[...Array(15)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-4 h-2 bg-yellow-500"
+                  style={{ top: `${i * 30}px`, left: i % 2 ? '100%' : '-50%' }}
+                />
+              ))}
+            </div>
+            <div className="absolute top-8 left-1/2 w-96 h-8 bg-yellow-600 origin-left -rotate-12">
+              {/* ワイヤー */}
+              <div className="absolute top-0 right-8 w-1 h-32 bg-gray-700 origin-top animate-pulse" />
+            </div>
+            <div className="absolute top-4 left-1/2 w-4 h-4 bg-red-500 rounded-full animate-pulse" />
+          </div>
+  
+          {/* 作業員 */}
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute bottom-16"
+              style={{ left: `${200 + i * 300}px` }}
+            >
+              <div className="relative w-8 h-12">
+                <div className="absolute bottom-0 w-full h-8 bg-blue-500" />
+                <div className="absolute top-0 w-6 h-6 bg-yellow-400 rounded-md animate-bounce" />
+              </div>
+            </div>
+          ))}
+  
+          {/* 重機類 */}
+          <div className="absolute bottom-0 right-1/4">
+            <div className="relative w-48 h-32">
+              <div className="absolute bottom-0 w-32 h-16 bg-yellow-800">
+                {/* キャタピラ */}
+                <div className="absolute bottom-0 w-full h-4 flex">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="flex-1 h-full border-r border-yellow-900" />
+                  ))}
+                </div>
+              </div>
+              <div className="absolute bottom-16 left-16 w-24 h-4 bg-yellow-800 origin-left -rotate-45 animate-pulse" />
+              <div className="absolute bottom-16 left-36 w-16 h-4 bg-yellow-800 origin-left rotate-45">
+                <div className="absolute right-0 w-8 h-12 bg-yellow-800 rotate-45" />
+              </div>
+            </div>
+          </div>
+  
+          {/* 建設資材とコーン */}
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute bottom-16"
+              style={{ left: `${150 + i * 200}px` }}
+            >
+              {/* 工事用コーン */}
+              <div className="absolute -left-8 bottom-0 w-4 h-8 bg-orange-500">
+                <div className="absolute top-0 w-full h-1 bg-white animate-pulse" />
+              </div>
+              {/* 鉄骨パイプ */}
+              <div className="w-32 h-16">
+                {[...Array(4)].map((_, j) => (
+                  <div
+                    key={j}
+                    className="absolute w-full h-3 bg-gray-400"
+                    style={{ 
+                      bottom: `${j * 4}px`,
+                      transform: `rotate(${j % 2 ? 3 : -3}deg)`
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+  
+        {/* 作業灯の光と粉塵効果 */}
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 70}%`,
+              width: '3px',
+              height: '3px',
+              backgroundColor: i % 2 ? '#FFD700' : '#FFFFFF',
+              opacity: 0.3,
+              animation: `blink ${1.5 + Math.random()}s infinite`
+            }}
+          />
         ))}
   
-        {/* 道路の水たまり */}
+        {/* 水たまりと反射光 */}
         <div className="absolute bottom-0 w-full">
-          {[...Array(8)].map((_, i) => {
-            const left = Math.random() * 100;
-            const width = 50 + Math.random() * 100;
-            return (
-              <div
-                key={i}
-                className="absolute bottom-2 h-4 bg-blue-900/10 rounded-full animate-pulse"
-                style={{ left: `${left}%`, width: `${width}px` }}
+          {[...Array(10)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute bottom-2 h-6 bg-blue-900/15 blur-sm"
+              style={{ 
+                left: `${Math.random() * 100}%`,
+                width: `${60 + Math.random() * 120}px`,
+                animation: 'ripple 3s infinite'
+              }}
               />
-            );
-          })}
+            ))}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
   
 
-  
-    // 高層ビル（背景用）
-// 高層ビル（背景用）
-const SkyscraperBackground = ({ position }) => (
+// 六本木ヒルズの背景
+const RoppongiHillsBackground = ({ position }) => (
   <div 
     className="absolute bottom-24"
-    style={{ left: `${position}px` }}
+    style={{ left: `${position}px`, zIndex: 5 }}
   >
-    {/* 高層ビル群 */}
-    <div className="relative w-screen h-96">
+    <div className="relative w-screen">
       {/* メインタワー */}
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-48 h-96 bg-slate-700 rounded-t-3xl">
-        {/* 窓のグリッド */}
-        <div className="absolute inset-2 grid grid-cols-6 gap-1">
-          {[...Array(72)].map((_, i) => (
-            <div key={i} className="w-full h-4 bg-sky-200 bg-opacity-30" />
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-80 h-[600px]">
+        {/* タワー本体 */}
+        <div className="absolute bottom-0 w-full h-full bg-slate-800 rounded-t-lg">
+          {/* ガラス面のグラデーション */}
+          <div className="absolute inset-2 bg-gradient-to-r from-sky-200/10 via-sky-200/20 to-sky-200/10" />
+          
+          {/* 窓のグリッド */}
+          <div className="absolute inset-4 grid grid-cols-8 gap-1">
+            {[...Array(200)].map((_, i) => (
+              <div key={i} className="w-full h-4 bg-yellow-100/20" />
+            ))}
+          </div>
+
+          {/* イルミネーション */}
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 rounded-full animate-twinkle"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                backgroundColor: ['#FFD700', '#00FFFF', '#FF69B4'][i % 3],
+                animationDelay: `${Math.random() * 2}s`
+              }}
+            />
           ))}
         </div>
-        {/* 頂上部分（ドーム） */}
-        <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-16 h-10 bg-slate-500 rounded-full border-4 border-slate-400" />
-      </div>
-      
-      {/* 左のビル群 */}
-      <div className="absolute bottom-0 left-24 w-32 h-72 bg-slate-600 rounded-t-xl">
-        <div className="absolute inset-1 grid grid-cols-4 gap-1">
-          {[...Array(48)].map((_, i) => (
-            <div key={i} className="w-full h-4 bg-sky-200 bg-opacity-30" />
-          ))}
-        </div>
-      </div>
-      
-      {/* 右のビル群 */}
-      <div className="absolute bottom-0 right-24 w-36 h-80 bg-slate-800 rounded-t-xl">
-        <div className="absolute inset-1 grid grid-cols-4 gap-1">
-          {[...Array(52)].map((_, i) => (
-            <div key={i} className="w-full h-4 bg-sky-200 bg-opacity-30" />
-          ))}
+
+        {/* 最上部 */}
+        <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40">
+          <div className="w-full h-full bg-slate-700" style={{ clipPath: 'polygon(0 50%, 50% 0, 100% 50%, 50% 100%)' }} />
         </div>
       </div>
 
-      {/* 中央タワーのサイドビル */}
-      <div className="absolute bottom-0 left-[40%] w-20 h-64 bg-slate-600 rounded-t-lg">
-        <div className="absolute inset-1 grid grid-cols-3 gap-1">
-          {[...Array(36)].map((_, i) => (
-            <div key={i} className="w-full h-4 bg-sky-200 bg-opacity-30" />
-          ))}
+      {/* 周辺の装飾的な要素 */}
+      {/* イルミネーションツリー */}
+      {[...Array(6)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute bottom-0"
+          style={{ 
+            left: `${200 + i * 300}px`,
+            transform: `scale(1)`
+          }}
+        >
+          <div className="relative w-32 h-48">
+            {/* 木の形 */}
+            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-4 h-20 bg-gray-800" />
+            <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 w-24 h-32 bg-green-900 rounded-full">
+              {/* イルミネーション */}
+              {[...Array(15)].map((_, j) => (
+                <div
+                  key={j}
+                  className="absolute w-2 h-2 rounded-full animate-twinkle"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    backgroundColor: ['#FFD700', '#00FFFF', '#FF69B4'][j % 3],
+                    animationDelay: `${Math.random() * 2}s`
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="absolute bottom-0 right-[40%] w-20 h-64 bg-slate-600 rounded-t-lg">
-        <div className="absolute inset-1 grid grid-cols-3 gap-1">
-          {[...Array(36)].map((_, i) => (
-            <div key={i} className="w-full h-4 bg-sky-200 bg-opacity-30" />
-          ))}
+      ))}
+
+      {/* 周辺の低層ビル */}
+      {[-300, -200, 200, 300].map((offset, i) => (
+        <div
+          key={i}
+          className="absolute bottom-0"
+          style={{ 
+            left: `50%`,
+            transform: `translateX(${offset}px)`,
+            height: `250px`,
+            width: '120px'
+          }}
+        >
+          <div className="w-full h-full bg-slate-700">
+            <div className="absolute inset-2 grid grid-cols-4 gap-1">
+              {[...Array(40)].map((_, j) => (
+                <div key={j} className="w-full h-4 bg-yellow-100/20" />
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      ))}
     </div>
+
+    {/* グラデーションの空 */}
+    <div className="absolute inset-0 bg-gradient-to-b from-indigo-900 via-purple-900 to-transparent pointer-events-none" />
   </div>
 );
-
-
-    
 
 // 大学（背景用）
 const UniversityBackground = ({ position }) => (
@@ -189,39 +348,49 @@ const UniversityBackground = ({ position }) => (
     }}
   >
     <div className="relative w-screen">
-      {/* 中央の建物 */}
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-96 h-80 bg-red-600">
-        {/* 屋根 */}
-        <div className="absolute -top-16 left-0 w-full h-16 bg-gray-700 clip-triangle" />
-        {/* 窓のグリッド */}
-        <div className="absolute inset-4 grid grid-cols-6 grid-rows-5 gap-2">
-          {[...Array(30)].map((_, i) => (
-            <div key={i} className="w-full h-8 bg-white bg-opacity-70 rounded-sm" />
-          ))}
-        </div>
-        {/* 柱 */}
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-40 bg-gray-500" />
-      </div>
+      {/* メインの建物 */}
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[800px] h-[400px]">
+        {/* 建物本体 */}
+        <div className="absolute bottom-0 w-full h-full bg-[#b04a3a]">
+          {/* レンガ模様 */}
+          <div className="absolute inset-0 grid grid-cols-20 grid-rows-12 gap-px opacity-10">
+            {[...Array(240)].map((_, i) => (
+              <div key={i} className="bg-black" />
+            ))}
+          </div>
 
-      {/* 左のウィング */}
-      <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-red-500">
-        {/* 屋根 */}
-        <div className="absolute -top-12 left-0 w-full h-12 bg-gray-700 clip-triangle" />
-        <div className="absolute inset-2 grid grid-cols-4 grid-rows-6 gap-1">
-          {[...Array(24)].map((_, i) => (
-            <div key={i} className="w-full h-6 bg-white bg-opacity-70 rounded-sm" />
-          ))}
-        </div>
-      </div>
+          {/* メインの窓グリッド */}
+          <div className="absolute inset-8 grid grid-cols-8 grid-rows-6 gap-4">
+            {[...Array(48)].map((_, i) => (
+              <div key={i} className="relative w-full h-full">
+                <div className="absolute inset-0 bg-white bg-opacity-70" />
+                <div className="absolute inset-0 grid grid-cols-2">
+                  <div className="border-r border-gray-400" />
+                </div>
+              </div>
+            ))}
+          </div>
 
-      {/* 右のウィング */}
-      <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-red-500">
-        {/* 屋根 */}
-        <div className="absolute -top-12 left-0 w-full h-12 bg-gray-700 clip-triangle" />
-        <div className="absolute inset-2 grid grid-cols-4 grid-rows-6 gap-1">
-          {[...Array(24)].map((_, i) => (
-            <div key={i} className="w-full h-6 bg-white bg-opacity-70 rounded-sm" />
-          ))}
+          {/* 中央部分 */}
+          <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-56 h-32">
+            <div className="absolute top-0 w-full h-full bg-gray-200 opacity-80" />
+            <div className="absolute bottom-4 w-full text-center text-gray-700 font-bold text-2xl">
+              UNIVERSITY
+            </div>
+          </div>
+
+          {/* 階段部分 */}
+          <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-48">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="w-full h-2 bg-gray-300"
+                style={{
+                  transform: `translateY(-${i * 2}px)`,
+                }}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -252,23 +421,42 @@ const styles = `
     </div>
   );
 
-  // 小さなビルとメンター
+
+
   const SmallOffice = ({ position }) => (
     <div 
       className="absolute bottom-24"
       style={{ left: `${position}px` }}
     >
-      <div className="relative w-48 h-48">
-        {/* 小さめのビル */}
-        <div className="absolute bottom-0 w-full h-40 bg-gray-300">
-          {/* 窓 */}
-          <div className="grid grid-cols-4 gap-2 p-2">
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className="w-full h-4 bg-yellow-100" />
+      {/* メインビル */}
+      <div className="relative w-64 h-64">
+        {/* 建物本体 */}
+        <div className="absolute bottom-0 w-64 h-56 bg-gray-300 rounded-t-lg shadow-lg">
+          {/* ウィンドウグリッド */}
+          <div className="grid grid-cols-4 gap-2 p-2 h-full">
+            {[...Array(16)].map((_, i) => (
+              <div key={i} className="w-full h-6 bg-gray-200 rounded-sm shadow-inner" />
             ))}
           </div>
-          {/* ドア */}
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-16 bg-gray-600" />
+          
+          {/* Life is Tech! ロゴエリア */}
+          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1 rounded shadow">
+            <div className="text-sm font-bold text-blue-600">Life is Tech!</div>
+            <div className="text-xs text-gray-600">大阪校</div>
+          </div>
+        </div>
+  
+        {/* エントランス */}
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-20 h-12 bg-gray-400 rounded-t-lg">
+          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-gray-200 rounded" />
+        </div>
+  
+        {/* ローソン */}
+        <div className="absolute bottom-0 left-0 w-32 h-16 bg-white rounded-tr-lg shadow-lg">
+          <div className="absolute top-2 left-2 w-28 h-6 bg-blue-600 rounded flex items-center justify-center">
+            <div className="text-white text-sm font-bold">LAWSON</div>
+          </div>
+          <div className="absolute bottom-2 left-2 w-28 h-6 bg-blue-100" />
         </div>
       </div>
     </div>
@@ -387,27 +575,48 @@ const styles = `
       </div>
     </div>
   );
-
-  // 学校の建物
-  const School = ({ position }) => (
-    <div 
-      className="absolute bottom-24"
-      style={{ left: `${position}px` }}
-    >
-      <div className="relative w-64 h-48">
-        <div className="absolute bottom-0 w-64 h-40 bg-gray-200">
-          <div className="grid grid-cols-4 gap-2 p-2">
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className="w-full h-6 bg-sky-200" />
-            ))}
-          </div>
+  
+const School = ({ position }) => (
+  <div 
+    className="absolute bottom-24"
+    style={{ left: `${position}px` }}
+  >
+    {/* メインビル */}
+    <div className="relative w-96 h-96">
+      {/* 建物本体 */}
+      <div className="absolute bottom-0 w-96 h-80 bg-gradient-to-b from-blue-400 to-blue-600 rounded-t-lg shadow-xl">
+        {/* ウィンドウグリッド */}
+        <div className="grid grid-cols-6 gap-2 p-4 h-full">
+          {[...Array(24)].map((_, i) => (
+            <div key={i} className="w-full h-8 bg-sky-100 rounded-sm shadow-inner flex items-center justify-center">
+              <div className="w-full h-6 bg-gradient-to-r from-sky-200 to-white opacity-50 rounded-sm" />
+            </div>
+          ))}
         </div>
-        <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-white">
-          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-8 border-4 border-gray-400 rounded-full" />
+        
+        {/* Life is Tech! ロゴエリア */}
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white px-4 py-2 rounded-lg shadow-lg">
+          <div className="text-lg font-bold text-blue-600">Life is Tech!</div>
+          <div className="text-sm text-gray-600">大阪校</div>
         </div>
       </div>
+
+      {/* エントランス */}
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-32 h-20 bg-gray-800 rounded-t-lg">
+        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-24 h-16 bg-gradient-to-r from-blue-200 to-blue-100 rounded-lg" />
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-gray-700" />
+      </div>
+
+      {/* ローソン */}
+      <div className="absolute bottom-0 left-0 w-32 h-16 bg-white rounded-tr-lg shadow-lg">
+        <div className="absolute top-2 left-2 w-28 h-6 bg-blue-600 rounded flex items-center justify-center">
+          <div className="text-white text-sm font-bold">LAWSON</div>
+        </div>
+        <div className="absolute bottom-2 left-2 w-28 h-6 bg-blue-100" />
+      </div>
     </div>
-  );
+  </div>
+);
 
   // 会話バブル（複数表示可能なバージョン）
   const ChatBubble = ({ text, position, isLeft, offsetY = 0, offsetX = 0 }) => (
@@ -563,18 +772,22 @@ const styles = `
   };
 
   useEffect(() => {
-    // 一定時間後に風が吹く
-    const windTimeout = setTimeout(() => {
+    // 風を定期的に発生させる
+    const windInterval = setInterval(() => {
       setIsWindBlowing(true);
       setTimeout(() => {
         setIsHoodOn(false);
         setTimeout(() => {
           setIsWindBlowing(false);
+          // フードをリセット（次の風のために）
+          setTimeout(() => {
+            setIsHoodOn(true);
+          }, 1000);
         }, 1000);
       }, 500);
-    }, 20000);
-
-    return () => clearTimeout(windTimeout);
+    }, 40000);  // 5秒ごとに風が吹くように変更
+  
+    return () => clearInterval(windInterval);
   }, []);
 
   const moveCharacter = useCallback(() => {
@@ -625,6 +838,22 @@ const styles = `
   }, [isWalking, moveCharacter]);
 
   useEffect(() => {
+    if (currentScene === 2) {
+      setIsPausedForKneeling(true); // しゃがみ込みを開始
+      setIsWalking(false); // 歩行を停止
+  
+      const timer = setTimeout(() => {
+        setIsPausedForKneeling(false); // しゃがみ込み終了
+        setIsWalking(true); // 再び歩行開始
+      }, 5000); // 5秒間停止
+  
+      return () => clearTimeout(timer); // クリーンアップ
+    }
+  }, [currentScene]);
+  
+  
+  
+  useEffect(() => {
     const handleKeyPress = (e) => {
       switch (e.key) {
         case ' ':
@@ -640,10 +869,11 @@ const styles = `
           break;
       }
     };
-
+  
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, []);
+
 
   const currentAnimation = getAnimationStyle(animationPhase);
 
@@ -676,13 +906,13 @@ const styles = `
         {currentScene === 0 && (
           <>
             <SmallOffice position={window.innerWidth * 0.5 + backgroundPosition} />
-            <Mentors position={window.innerWidth * 0.5 + backgroundPosition + 20} />
+            <Mentors position={window.innerWidth * 0.5 + backgroundPosition + 100} />
             {/* メンターたちの会話 */}
             <ChatBubble 
               text="卒業おめでとう！"
               position={window.innerWidth * 0.5 + backgroundPosition + 20} 
               isLeft={true}
-              offsetY={60}
+              offsetY={30}
             />
             {/* 主人公の会話 */}
             <ChatBubble 
@@ -698,7 +928,7 @@ const styles = `
         {/* 受験失敗シーン */}
         {currentScene === 1 && (
           <>
-   <RainyStreetBackground position={window.innerWidth * 0.5 + backgroundPosition} />
+   <ConstructionSiteBackground position={window.innerWidth * 0.5 + backgroundPosition} />
           <ChatBubble 
             text="憧れのメンターさんと同じ大学に絶対に行く！"
             position={position} 
@@ -710,14 +940,38 @@ const styles = `
 
         {/* 転入学試験シーン */}
         {currentScene === 2 && (
-          <ChatBubble 
-            text="プログラミングで学習効率を上げるツールを開発してみよう！"
-            position={position} 
-            isLeft={false}
-            offsetY={30}
-          />
-        )}
+  <>
+    {/* 認定証の降下 */}
+    {isPausedForKneeling && (
+  <Certification characterPosition={position} />
+)}
 
+    {/* しゃがみ込む動作 */}
+    {isPausedForKneeling ? (
+      <div
+        className="absolute bottom-24 transition-transform duration-300"
+        style={{
+          left: `${position}px`,
+          transform: "translateY(10px)", // しゃがむ動作
+          zIndex: 20,
+        }}
+      >
+        <div className="relative w-8 h-16">
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-6 h-6 bg-yellow-100" />
+          <div className="absolute top-6 left-1/2 transform -translate-x-1/2 w-8 h-6 bg-gray-800" />
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-4 bg-blue-900" />
+        </div>
+      </div>
+    ) : (
+      <ChatBubble 
+        text="プログラミングで学習効率を上げるツールを開発してみよう！"
+        position={position} 
+        isLeft={false}
+        offsetY={30}
+      />
+    )}
+  </>
+)}
         {/* メンター再会シーン */}
         {currentScene === 3 && (
           <>
@@ -726,7 +980,7 @@ const styles = `
               <>
                 <Mentors position={position + 30} />
                 <ChatBubble 
-                  text="久しぶりです！"
+                  text="認定証ずっと玄関に飾ってます笑"
                   position={position} 
                   isLeft={false}
                   offsetY={60}
@@ -743,24 +997,22 @@ const styles = `
         )}
                 {/* ハッカソンシーン */}
                 {currentScene === 4 && (
-          <>
-            <SkyscraperBackground position={window.innerWidth * 0.5 + backgroundPosition} />
-            
-            <ChatBubble 
-              text="メンターとしてメンバーを支えられる技術力やコミュニケーション力をつける！"
-              position={position} 
-              isLeft={false}
-              offsetY={30}
-            />
-          </>
-        )}
-
+  <>
+     <RoppongiHillsBackground position={window.innerWidth * 0.5 + backgroundPosition} />
+    <ChatBubble 
+      text="メンターとしてメンバーを支えられる技術力やコミュニケーション力をつける！"
+      position={position} 
+      isLeft={false}
+      offsetY={30}
+    />
+  </>
+)}
 
         {/* 最終シーン */}
         {currentScene === scenes.length - 1 && (
           <>
             <SmallOffice position={window.innerWidth * 0.5 + backgroundPosition} />
-            <NewMentors position={window.innerWidth * 0.5 + backgroundPosition + 20} />
+            <NewMentors position={window.innerWidth * 0.5 + backgroundPosition + 100} />
             <SupportingMembers position={position} />
             <Mentors position={position - 40} />
             <ChatBubble 
@@ -771,7 +1023,7 @@ const styles = `
             />
             <ChatBubble 
               text="モノづくりの楽しさを一緒に教えよう！"
-              position={window.innerWidth * 0.5 + backgroundPosition + 20} 
+              position={window.innerWidth * 0.5 + backgroundPosition + 30} 
               isLeft={true}
               offsetY={30}
             />
@@ -869,10 +1121,24 @@ const styles = `
           0% { transform: translateY(-100%); }
           100% { transform: translateY(100vh); }
         }
-        @keyframes windBlow {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX( 100%); }
-        }
+          @keyframes kneeling {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(10px); } /* しゃがみ込む */
+}
+
+@keyframes standing {
+  0% { transform: translateY(10px); }
+  100% { transform: translateY(0); } /* 立ち上がる */
+}
+
+
+
+
+          @keyframes falling {
+  0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(500px) rotate(360deg); opacity: 0; }
+}
+
         .animate-windBlow {
           animation: hood-blow-off 0.5s forwards;
         }
@@ -880,6 +1146,92 @@ const styles = `
           0% { transform: translateX(0) rotate(0deg); }
           100% { transform: translateX(50px) rotate(20deg); opacity: 0; }
         }
+
+        @keyframes kneeling {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(10px); }
+}
+
+@keyframes standing {
+  0% { transform: translateY(10px); }
+  100% { transform: translateY(0); }
+}
+  @keyframes falling {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(500px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.falling-effect {
+  animation: falling 3s ease-out infinite;
+}
+
+@keyframes certFall {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(400px); /* 最終的な位置 */
+    opacity: 1;
+  }
+}
+
+@keyframes certFall {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(400px); /* 最終的な位置 */
+    opacity: 1;
+  }
+}
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .animate-twinkle {
+    animation: twinkle 2s infinite ease-in-out;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+  @keyframes ripple {
+    0%, 100% { transform: scale(1); opacity: 0.1; }
+    50% { transform: scale(1.05); opacity: 0.15; }
+  }
+
+
+        @keyframes blink {
+          0%, 100% { opacity: 0.3; }
+          50% { transform: scale(1.2); opacity: 0.6; }
+        }
+        @keyframes ripple {
+          0%, 100% { transform: scale(1); opacity: 0.15; }
+          50% { transform: scale(1.1); opacity: 0.2; }
+        }
+
+
+              @keyframes blink {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 0.8; }
+      }
+      @keyframes ripple {
+        0%, 100% { transform: scale(1); opacity: 0.1; }
+        50% { transform: scale(1.05); opacity: 0.15; }
+      }
+
+
+
       `}</style>
     </div>
   );
