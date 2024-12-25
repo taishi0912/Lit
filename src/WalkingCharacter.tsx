@@ -70,7 +70,7 @@ const WalkingCharacter = () => {
     </div>
   );
 
-
+//工事
   const ConstructionSiteBackground = ({ position }) => (
     <div 
       className="absolute bottom-24"
@@ -235,107 +235,117 @@ const WalkingCharacter = () => {
   
 
 // 六本木ヒルズの背景
-const RoppongiHillsBackground = ({ position }) => (
-  <div 
-    className="absolute bottom-24"
-    style={{ left: `${position}px`, zIndex: 5 }}
-  >
-    <div className="relative w-screen">
-      {/* メインタワー */}
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-80 h-[600px]">
-        {/* タワー本体 */}
-        <div className="absolute bottom-0 w-full h-full bg-slate-800 rounded-t-lg">
-          {/* ガラス面のグラデーション */}
-          <div className="absolute inset-2 bg-gradient-to-r from-sky-200/10 via-sky-200/20 to-sky-200/10" />
-          
-          {/* 窓のグリッド */}
-          <div className="absolute inset-4 grid grid-cols-8 gap-1">
-            {[...Array(200)].map((_, i) => (
-              <div key={i} className="w-full h-4 bg-yellow-100/20" />
-            ))}
+const RoppongiHillsBackground = ({ position }) => {
+  return (
+    <div
+      className="absolute bottom-24"
+      style={{ left: `${position}px`, zIndex: 5 }}
+    >
+      <div className="relative w-screen">
+        {/* 六本木ヒルズ */}
+        <div className="absolute bottom-0 left-[20%] transform -translate-x-1/2">
+          <div className="relative w-[250px] h-[500px]">
+            <div className="absolute bottom-0 w-full h-full bg-slate-800 rounded-t-lg">
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900" />
+              <div className="absolute inset-4 grid grid-cols-10 gap-1">
+                {[...Array(150)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="relative w-full h-2 bg-gradient-to-r from-yellow-100/20 to-blue-100/20"
+                  >
+                    <div
+                      className="absolute inset-0 bg-yellow-200/10 animate-pulse"
+                      style={{ animationDelay: `${Math.random() * 5}s` }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
+        </div>
 
-          {/* イルミネーション */}
-          {[...Array(20)].map((_, i) => (
+        {/* 東京スカイツリー */}
+        <div className="absolute bottom-0 right-[30%]">
+          <div className="relative w-[120px] h-[600px]">
+            <div className="absolute bottom-0 w-full h-full bg-gradient-to-t from-gray-400 to-gray-300">
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 100%)",
+                  clipPath: "polygon(30% 0, 70% 0, 100% 100%, 0 100%)",
+                }}
+              />
+              <div className="absolute top-[30%] left-1/2 transform -translate-x-1/2 w-[100px] h-[40px] bg-sky-200/30 rounded-lg">
+                <div className="absolute inset-1 bg-sky-100/20 animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* イルミネーションの木 */}
+        {[...Array(3)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute bottom-0"
+            style={{
+              left: `${25 + i * 20}%`,
+              transform: `translateX(-50%)`,
+            }}
+          >
+            <div className="relative w-[60px] h-[100px]">
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-4 h-20 bg-gray-800" />
+              <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 w-24 h-32 bg-green-900 rounded-full">
+                {[...Array(15)].map((_, j) => (
+                  <div
+                    key={j}
+                    className="absolute w-2 h-2 rounded-full animate-twinkle"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      backgroundColor: ["#FFD700", "#00FFFF", "#FF69B4"][
+                        j % 3
+                      ],
+                      animationDelay: `${Math.random() * 2}s`,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* 夜空のグラデーション */}
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-900 via-purple-900/80 to-transparent pointer-events-none">
+          {[...Array(50)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-1 h-1 rounded-full animate-twinkle"
+              className="absolute w-1 h-1 bg-white rounded-full animate-twinkle"
               style={{
                 left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                backgroundColor: ['#FFD700', '#00FFFF', '#FF69B4'][i % 3],
-                animationDelay: `${Math.random() * 2}s`
+                top: `${Math.random() * 50}%`,
+                animationDelay: `${Math.random() * 3}s`,
               }}
             />
           ))}
         </div>
-
-        {/* 最上部 */}
-        <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40">
-          <div className="w-full h-full bg-slate-700" style={{ clipPath: 'polygon(0 50%, 50% 0, 100% 50%, 50% 100%)' }} />
-        </div>
       </div>
 
-      {/* 周辺の装飾的な要素 */}
-      {/* イルミネーションツリー */}
-      {[...Array(6)].map((_, i) => (
-        <div
-          key={i}
-          className="absolute bottom-0"
-          style={{ 
-            left: `${200 + i * 300}px`,
-            transform: `scale(1)`
-          }}
-        >
-          <div className="relative w-32 h-48">
-            {/* 木の形 */}
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-4 h-20 bg-gray-800" />
-            <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 w-24 h-32 bg-green-900 rounded-full">
-              {/* イルミネーション */}
-              {[...Array(15)].map((_, j) => (
-                <div
-                  key={j}
-                  className="absolute w-2 h-2 rounded-full animate-twinkle"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                    backgroundColor: ['#FFD700', '#00FFFF', '#FF69B4'][j % 3],
-                    animationDelay: `${Math.random() * 2}s`
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      ))}
-
-      {/* 周辺の低層ビル */}
-      {[-300, -200, 200, 300].map((offset, i) => (
-        <div
-          key={i}
-          className="absolute bottom-0"
-          style={{ 
-            left: `50%`,
-            transform: `translateX(${offset}px)`,
-            height: `250px`,
-            width: '120px'
-          }}
-        >
-          <div className="w-full h-full bg-slate-700">
-            <div className="absolute inset-2 grid grid-cols-4 gap-1">
-              {[...Array(40)].map((_, j) => (
-                <div key={j} className="w-full h-4 bg-yellow-100/20" />
-              ))}
-            </div>
-          </div>
-        </div>
-      ))}
+      <style jsx global>{`
+        @keyframes twinkle {
+          0%,
+          100% {
+            opacity: 0.2;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
+  );
+};
 
-    {/* グラデーションの空 */}
-    <div className="absolute inset-0 bg-gradient-to-b from-indigo-900 via-purple-900 to-transparent pointer-events-none" />
-  </div>
-);
 
 // 大学（背景用）
 const UniversityBackground = ({ position }) => (
