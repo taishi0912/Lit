@@ -4,7 +4,6 @@ const WalkingCharacter = () => {
   const [position, setPosition] = useState(0);
   const [isWalking, setIsWalking] = useState(false);
   const [animationPhase, setAnimationPhase] = useState(0);
-  // 追加コード: しゃがみ込み状態の管理
   const [isKneeling, setIsKneeling] = useState(false);
   const [currentScene, setCurrentScene] = useState(0);
   const [backgroundPosition, setBackgroundPosition] = useState(0);
@@ -576,48 +575,6 @@ const styles = `
     </div>
   );
   
-const School = ({ position }) => (
-  <div 
-    className="absolute bottom-24"
-    style={{ left: `${position}px` }}
-  >
-    {/* メインビル */}
-    <div className="relative w-96 h-96">
-      {/* 建物本体 */}
-      <div className="absolute bottom-0 w-96 h-80 bg-gradient-to-b from-blue-400 to-blue-600 rounded-t-lg shadow-xl">
-        {/* ウィンドウグリッド */}
-        <div className="grid grid-cols-6 gap-2 p-4 h-full">
-          {[...Array(24)].map((_, i) => (
-            <div key={i} className="w-full h-8 bg-sky-100 rounded-sm shadow-inner flex items-center justify-center">
-              <div className="w-full h-6 bg-gradient-to-r from-sky-200 to-white opacity-50 rounded-sm" />
-            </div>
-          ))}
-        </div>
-        
-        {/* Life is Tech! ロゴエリア */}
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white px-4 py-2 rounded-lg shadow-lg">
-          <div className="text-lg font-bold text-blue-600">Life is Tech!</div>
-          <div className="text-sm text-gray-600">大阪校</div>
-        </div>
-      </div>
-
-      {/* エントランス */}
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-32 h-20 bg-gray-800 rounded-t-lg">
-        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-24 h-16 bg-gradient-to-r from-blue-200 to-blue-100 rounded-lg" />
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-gray-700" />
-      </div>
-
-      {/* ローソン */}
-      <div className="absolute bottom-0 left-0 w-32 h-16 bg-white rounded-tr-lg shadow-lg">
-        <div className="absolute top-2 left-2 w-28 h-6 bg-blue-600 rounded flex items-center justify-center">
-          <div className="text-white text-sm font-bold">LAWSON</div>
-        </div>
-        <div className="absolute bottom-2 left-2 w-28 h-6 bg-blue-100" />
-      </div>
-    </div>
-  </div>
-);
-
   // 会話バブル（複数表示可能なバージョン）
   const ChatBubble = ({ text, position, isLeft, offsetY = 0, offsetX = 0 }) => (
     <div 
@@ -785,7 +742,7 @@ const School = ({ position }) => (
           }, 1000);
         }, 1000);
       }, 500);
-    }, 40000);  // 5秒ごとに風が吹くように変更
+    }, 40000);  // 40秒ごとに風が吹くように変更
   
     return () => clearInterval(windInterval);
   }, []);
@@ -909,14 +866,14 @@ const School = ({ position }) => (
             <Mentors position={window.innerWidth * 0.5 + backgroundPosition + 100} />
             {/* メンターたちの会話 */}
             <ChatBubble 
-              text="卒業おめでとう！"
+              text="3年間お疲れ!卒業おめでとう!!"
               position={window.innerWidth * 0.5 + backgroundPosition + 20} 
               isLeft={true}
               offsetY={30}
             />
             {/* 主人公の会話 */}
             <ChatBubble 
-              text="大学合格してメンターになって帰ってきます！"
+              text="大学合格してメンターとして帰ってきます！"
               position={position} 
               isLeft={false}
               offsetY={30}
@@ -1000,8 +957,8 @@ const School = ({ position }) => (
   <>
      <RoppongiHillsBackground position={window.innerWidth * 0.5 + backgroundPosition} />
     <ChatBubble 
-      text="メンターとしてメンバーを支えられる技術力やコミュニケーション力をつける！"
-      position={position} 
+      text="メンターとしてメンバーを支えられる技術力やコミュニケーション力を身につける！"
+      position={position}
       isLeft={false}
       offsetY={30}
     />
@@ -1016,13 +973,13 @@ const School = ({ position }) => (
             <SupportingMembers position={position} />
             <Mentors position={position - 40} />
             <ChatBubble 
-              text="今度は僕が次代のエンジニアたちを支える番です！"
+              text="今度は僕が次代のエンジニアたちを支えたい！"
               position={position} 
               isLeft={false}
               offsetY={30}
             />
             <ChatBubble 
-              text="モノづくりの楽しさを一緒に教えよう！"
+              text="モノづくりの楽しさを一緒に伝えよう！"
               position={window.innerWidth * 0.5 + backgroundPosition + 30} 
               isLeft={true}
               offsetY={30}
