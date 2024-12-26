@@ -236,77 +236,105 @@ const WalkingCharacter = () => {
 
 // 六本木ヒルズの背景
 const RoppongiHillsBackground = ({ position }) => {
+  // 窓のアニメーション付きライト
+  const renderWindow = (delay = 0) => (
+    <div className="relative w-full h-full">
+      <div className="w-full h-full bg-sky-100/20 rounded">
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-white/10 to-sky-200/20 animate-pulse rounded"
+          style={{ animationDelay: `${delay}s` }}
+        />
+      </div>
+    </div>
+  );
+
   return (
     <div
       className="absolute bottom-24"
-      style={{ left: `${position}px`, zIndex: 5 }}
+      style={{
+        left: `${position}px`,
+        zIndex: 5,
+      }}
     >
       <div className="relative w-screen">
         {/* 六本木ヒルズ */}
         <div className="absolute bottom-0 left-[20%] transform -translate-x-1/2">
-          <div className="relative w-[250px] h-[500px]">
-            <div className="absolute bottom-0 w-full h-full bg-slate-800 rounded-t-lg">
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900" />
-              <div className="absolute inset-4 grid grid-cols-10 gap-1">
-                {[...Array(150)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="relative w-full h-2 bg-gradient-to-r from-yellow-100/20 to-blue-100/20"
-                  >
-                    <div
-                      className="absolute inset-0 bg-yellow-200/10 animate-pulse"
-                      style={{ animationDelay: `${Math.random() * 5}s` }}
-                    />
+          <div className="relative w-[200px] h-[250px]">
+            {/* タワー本体 */}
+            <div className="absolute bottom-0 w-full h-full bg-gradient-to-b from-gray-700 to-gray-800 rounded-lg">
+              {/* 窓のグリッド */}
+              <div className="absolute inset-4 grid grid-cols-8 gap-1">
+                {[...Array(40)].map((_, i) => (
+                  <div key={i} className="h-3">
+                    {renderWindow(Math.random() * 3)}
                   </div>
                 ))}
               </div>
             </div>
+            {/* 建物の頂部 */}
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-16 h-4 bg-gray-500 rounded-b-lg" />
           </div>
         </div>
 
         {/* 東京スカイツリー */}
-        <div className="absolute bottom-0 right-[30%]">
-          <div className="relative w-[120px] h-[600px]">
-            <div className="absolute bottom-0 w-full h-full bg-gradient-to-t from-gray-400 to-gray-300">
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 100%)",
-                  clipPath: "polygon(30% 0, 70% 0, 100% 100%, 0 100%)",
-                }}
-              />
-              <div className="absolute top-[30%] left-1/2 transform -translate-x-1/2 w-[100px] h-[40px] bg-sky-200/30 rounded-lg">
-                <div className="absolute inset-1 bg-sky-100/20 animate-pulse" />
-              </div>
-            </div>
-          </div>
-        </div>
+<div className="absolute bottom-0 right-[30%]">
+  <div className="relative w-[80px] h-[300px]"> {/* 高さを増加 */}
+    {/* メインシャフト */}
+    <div
+      className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-full bg-gradient-to-b from-red-500 to-red-600"
+      style={{
+        clipPath: "polygon(25% 0, 75% 0, 100% 100%, 0 100%)",
+      }}
+    >
+      {/* 白いストライプ */}
+      {[...Array(10)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute w-full h-6"
+          style={{
+            top: `${i * 10}%`,
+            background:
+              "linear-gradient(90deg, transparent 45%, white 45%, white 55%, transparent 55%)",
+          }}
+        />
+      ))}
+    </div>
+    {/* 展望台 */}
+    <div className="absolute bottom-[60%] left-1/2 transform -translate-x-1/2 w-16 h-8 bg-gradient-to-b from-red-400 to-red-500 rounded-lg" />
+    {/* タワートップの赤い部分を延長 */}
+    <div
+      className="absolute top-0 left-1/2 transform -translate-x-1/2 w-6 h-16 bg-gradient-to-b from-red-500 to-red-600"
+      style={{
+        clipPath: "polygon(50% 0, 0% 100%, 100% 100%)", // 先端の形を整える
+      }}
+    />
+  </div>
+</div>
 
-        {/* イルミネーションの木 */}
+
+
+
+        {/* 木（イルミネーション付き） */}
         {[...Array(3)].map((_, i) => (
           <div
             key={i}
             className="absolute bottom-0"
             style={{
-              left: `${25 + i * 20}%`,
-              transform: `translateX(-50%)`,
+              left: `${20 + i * 25}%`,
+              transform: "translateX(-50%)",
             }}
           >
-            <div className="relative w-[60px] h-[100px]">
+            <div className="relative w-[50px] h-[80px]">
               <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-4 h-20 bg-gray-800" />
-              <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 w-24 h-32 bg-green-900 rounded-full">
-                {[...Array(15)].map((_, j) => (
+              <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-green-900 rounded-full">
+                {[...Array(12)].map((_, j) => (
                   <div
                     key={j}
-                    className="absolute w-2 h-2 rounded-full animate-twinkle"
+                    className="absolute w-2 h-2 rounded-full"
                     style={{
                       left: `${Math.random() * 100}%`,
                       top: `${Math.random() * 100}%`,
-                      backgroundColor: ["#FFD700", "#00FFFF", "#FF69B4"][
-                        j % 3
-                      ],
-                      animationDelay: `${Math.random() * 2}s`,
+                      backgroundColor: ["#FFD700", "#FF69B4", "#00FFFF"][j % 3],
                     }}
                   />
                 ))}
@@ -315,33 +343,21 @@ const RoppongiHillsBackground = ({ position }) => {
           </div>
         ))}
 
-        {/* 夜空のグラデーション */}
-        <div className="absolute inset-0 bg-gradient-to-b from-indigo-900 via-purple-900/80 to-transparent pointer-events-none">
-          {[...Array(50)].map((_, i) => (
+        {/* 夜空 */}
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-900 to-purple-900">
+          {[...Array(30)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-1 h-1 bg-white rounded-full animate-twinkle"
+              className="absolute w-1 h-1 bg-white rounded-full"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 50}%`,
-                animationDelay: `${Math.random() * 3}s`,
+                animationDelay: `${Math.random() * 2}s`,
               }}
             />
           ))}
         </div>
       </div>
-
-      <style jsx global>{`
-        @keyframes twinkle {
-          0%,
-          100% {
-            opacity: 0.2;
-          }
-          50% {
-            opacity: 1;
-          }
-        }
-      `}</style>
     </div>
   );
 };
@@ -377,7 +393,7 @@ const TransferExamBackground = ({ position }) => (
           {/* 図書館のサイン */}
           <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
             <div className="px-4 py-1 bg-amber-700 text-amber-100 text-sm font-bold rounded shadow-md">
-              市立図書館
+              図書館
             </div>
           </div>
         </div>
@@ -456,65 +472,117 @@ const TransferExamBackground = ({ position }) => (
   </div>
 );
 
-
-// 大学（背景用）
-const UniversityBackground = ({ position }) => (
-  <div
-    className="absolute bottom-24"
-    style={{
-      left: `${position}px`,
-      zIndex: 5,
-    }}
-  >
-    <div className="relative w-screen">
-      {/* メインの建物 */}
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[800px] h-[400px]">
-        {/* 建物本体 */}
-        <div className="absolute bottom-0 w-full h-full bg-[#b04a3a]">
-          {/* レンガ模様 */}
-          <div className="absolute inset-0 grid grid-cols-20 grid-rows-12 gap-px opacity-10">
-            {[...Array(240)].map((_, i) => (
-              <div key={i} className="bg-black" />
-            ))}
+//大学
+const UniversityBackground = ({ position }) => {
+  const renderWindow = (hasFrame = true) => (
+    <div className="relative w-full h-full">
+      <div className="w-full h-full bg-[#f5f5f5] rounded-t-lg shadow-sm">
+        {hasFrame && (
+          <div className="w-full h-full border-2 border-[#8c3626] rounded-t-lg grid grid-cols-2">
+            <div className="border-r border-[#8c3626]" />
           </div>
+        )}
+      </div>
+    </div>
+  );
 
-          {/* メインの窓グリッド */}
-          <div className="absolute inset-8 grid grid-cols-8 grid-rows-6 gap-4">
-            {[...Array(48)].map((_, i) => (
-              <div key={i} className="relative w-full h-full">
-                <div className="absolute inset-0 bg-white bg-opacity-70" />
-                <div className="absolute inset-0 grid grid-cols-2">
-                  <div className="border-r border-gray-400" />
+  const renderColumn = () => (
+    <div className="relative w-6 h-full">
+      <div className="w-full h-full bg-[#f5f5f5] rounded-lg shadow-inner" />
+      <div className="absolute -top-2 w-full h-4 bg-[#f5f5f5] rounded-t-lg" 
+           style={{ clipPath: 'polygon(15% 100%, 85% 100%, 100% 0, 0 0)' }} />
+      <div className="absolute -bottom-2 w-full h-4 bg-[#f5f5f5]" />
+    </div>
+  );
+
+  return (
+    <div
+      className="absolute bottom-24"
+      style={{ left: `${position}px`, zIndex: 5 }}
+    >
+      <div className="relative w-screen">
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[400px]">
+          <div className="relative h-72 bg-[#b04a3a] rounded-t-lg shadow-2xl">
+            <div className="absolute -top-10 left-0 right-0">
+              <div className="h-10 bg-[#8c3626]" 
+                   style={{ clipPath: 'polygon(0 100%, 50% 0, 100% 100%)' }} />
+              <div className="absolute bottom-1 left-0 right-0 h-1 bg-[#732d1d]" />
+            </div>
+            <div className="absolute -top-40 left-1/2 transform -translate-x-1/2">
+              <div className="relative w-24 h-36 bg-[#b04a3a] rounded-t-lg">
+                <div className="absolute -top-6 left-0 right-0 h-6 bg-[#8c3626]"
+                     style={{ clipPath: 'polygon(0 100%, 50% 0, 100% 100%)' }} />
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
+                  <div className="w-14 h-14 bg-[#f5f5f5] rounded-full border-4 border-[#8c3626] shadow-lg">
+                    <div className="absolute top-1/2 left-1/2 w-6 h-0.5 bg-[#8c3626] origin-left"
+                         style={{ transform: 'rotate(-45deg)' }} />
+                    <div className="absolute top-1/2 left-1/2 w-4 h-0.5 bg-[#8c3626] origin-left"
+                         style={{ transform: 'rotate(-90deg)' }} />
+                  </div>
+                </div>
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-12 h-10">
+                  {renderWindow(false)}
+                </div>
+              </div>
+            </div>
+            <div className="absolute inset-4 grid grid-cols-6 gap-3">
+              {[...Array(24)].map((_, i) => (
+                <div key={i} className="h-8">
+                  {renderWindow()}
+                </div>
+              ))}
+            </div>
+            <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-40 h-32">
+              <div className="absolute bottom-0 w-full">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} 
+                       className="h-3 bg-[#8c3626] rounded-lg mb-1"
+                       style={{ transform: `scale(${1 - (i * 0.1)})` }} />
+                ))}
+              </div>
+              <div className="absolute bottom-8 w-full flex justify-around px-1">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i}>
+                    {renderColumn()}
+                  </div>
+                ))}
+              </div>
+              <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 w-16 h-20">
+                <div className="w-full h-full bg-[#8c3626] rounded-t-lg">
+                  <div className="absolute top-1 left-1 right-1 bottom-0 border-2 border-[#f5f5f5] rounded-t-lg grid grid-cols-2">
+                    <div className="border-r border-[#f5f5f5]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            {[-1, 1].map((direction) => (
+              <div key={direction}
+                   className="absolute bottom-0 w-36 h-48 bg-[#b04a3a] rounded-t-lg shadow-lg"
+                   style={{ 
+                     [direction === -1 ? 'right' : 'left']: '100%',
+                     transform: `translateX(${direction * 10}px)`
+                   }}>
+                <div className="absolute inset-4 grid grid-rows-4 gap-3">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="w-full h-8">
+                      {renderWindow()}
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
           </div>
-
-          {/* 中央部分 */}
-          <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-56 h-32">
-            <div className="absolute top-0 w-full h-full bg-gray-200 opacity-80" />
-            <div className="absolute bottom-4 w-full text-center text-gray-700 font-bold text-2xl">
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+            <div className="px-6 py-2 bg-[#8c3626] text-white text-lg font-bold rounded-lg shadow-md">
               UNIVERSITY
             </div>
-          </div>
-
-          {/* 階段部分 */}
-          <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-48">
-            {[...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className="w-full h-2 bg-gray-300"
-                style={{
-                  transform: `translateY(-${i * 2}px)`,
-                }}
-              />
-            ))}
           </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
+
 
 // Clip triangle for roof effect
 const styles = `
@@ -558,9 +626,9 @@ const styles = `
             ))}
           </div>
           
-          {/* Life is Tech! ロゴエリア */}
-          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1 rounded shadow">
-            <div className="text-sm font-bold text-blue-600">Life is Tech!</div>
+{/* Life is Tech! ロゴエリア */}
+<div className="absolute top-2 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1 rounded shadow">
+            <div className="text-sm font-bold text-[#333333]">Life is Tech!</div>
             <div className="text-xs text-gray-600">大阪校</div>
           </div>
         </div>
@@ -986,14 +1054,14 @@ const styles = `
             <Mentors position={window.innerWidth * 0.5 + backgroundPosition + 100} />
             {/* メンターたちの会話 */}
             <ChatBubble 
-              text="3年間お疲れ!卒業おめでとう!!"
+              text="3年間お疲れ!卒業おめでとう！大学生になってからもまた会えるといいな！！"
               position={window.innerWidth * 0.5 + backgroundPosition + 20} 
               isLeft={true}
               offsetY={30}
             />
             {/* 主人公の会話 */}
             <ChatBubble 
-              text="大学合格してメンターとして帰ってきます！"
+              text="プログラミングだけじゃなく、『伝わる質問の仕方』や『学び続ける姿勢』を教えていただき、ありがとうございました。大学に合格して成長して戻ってきます！"
               position={position} 
               isLeft={false}
               offsetY={30}
@@ -1007,7 +1075,7 @@ const styles = `
           <>
    <ConstructionSiteBackground position={window.innerWidth * 0.5 + backgroundPosition} />
           <ChatBubble 
-            text="憧れのメンターさんと同じ大学に絶対に行く！"
+            text="憧れのメンターの背中を追いかけて、同じ大学に絶対に行く！"
             position={position} 
             isLeft={false}
             offsetY={30}
@@ -1042,7 +1110,7 @@ const styles = `
       </div>
     ) : (
       <ChatBubble 
-        text="プログラミングで学習効率を上げるツールを開発してみよう！"
+        text="メンターから教わったプログラミングの可能性で、学習効率を上げるツールを開発してみよう！"
         position={position} 
         isLeft={false}
         offsetY={30}
@@ -1058,13 +1126,13 @@ const styles = `
               <>
                 <Mentors position={position + 30} />
                 <ChatBubble 
-                  text="認定証ずっと玄関に飾ってます笑"
+                  text="あの時いただいた認定証を見るたび、諦めずに頑張ろうって勇気をもらってました！こなつさんは、僕にとってのオールマイトです!!"
                   position={position} 
                   isLeft={false}
                   offsetY={60}
                 />
                 <ChatBubble 
-                  text="合格おめでとう！"
+                  text="合格おめでとう！!"
                   position={position + 30} 
                   isLeft={true}
                   offsetY={30}
@@ -1078,7 +1146,7 @@ const styles = `
   <>
      <RoppongiHillsBackground position={window.innerWidth * 0.5 + backgroundPosition} />
     <ChatBubble 
-      text="メンターとしてメンバーを支えられる技術力やコミュニケーション力を身につける！"
+      text="メンバー一人一人の個性と夢を大切にできるメンターを目指して、チーム開発で技術力とコミュニケーション力を磨いていきたい！"
       position={position}
       isLeft={false}
       offsetY={30}
@@ -1094,13 +1162,13 @@ const styles = `
             <SupportingMembers position={position} />
             <Mentors position={position - 40} />
             <ChatBubble 
-              text="今度は僕が次代のエンジニアたちを支えたい！"
+              text="憧れのメンターから受け継いだのは、技術だけじゃない。学び続ける姿勢と、新しい可能性を追求する情熱で、次世代のエンジニアたちを支えていきたい！"
               position={position} 
               isLeft={false}
               offsetY={30}
             />
             <ChatBubble 
-              text="モノづくりの楽しさを一緒に伝えよう！"
+              text="技術は進化し続けるけど、学びに向かう姿勢は変わらない。その大切さを、一緒に伝えていこう！"
               position={window.innerWidth * 0.5 + backgroundPosition + 30} 
               isLeft={true}
               offsetY={30}
