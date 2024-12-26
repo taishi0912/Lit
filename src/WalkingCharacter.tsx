@@ -1,3 +1,5 @@
+//時間あったら、各背景、キャラクター、エフェクト、インタラクション部分を個別のコンポーネント化する。
+
 import React, { useState, useEffect, useCallback } from 'react';
 
 const WalkingCharacter = () => {
@@ -582,19 +584,7 @@ const UniversityBackground = ({ position }) => {
     </div>
   );
 };
-
-
-// Clip triangle for roof effect
-const styles = `
-  .clip-triangle {
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  }
-`;
-
-
-
-    
-  
+      
   // 雲のコンポーネント
   const Cloud = ({ initialPosition }) => (
     <div 
